@@ -172,3 +172,12 @@ VALUES
 (1, "00000010", "56\" Телевизор Samsung UE56NU7170U", "Коротко: Хороший телевизор Samsung 56", "LED телевизор Samsung 56", 10.00),
 (1, "00000011", "60\" Телевизор Samsung UE60NU7170U", "Коротко: Хороший телевизор Samsung 60", "LED телевизор Samsung 60", 11.00),
 (1, "00000012", "64\" Телевизор Samsung UE64NU7170U", "Коротко: Хороший телевизор Samsung 64", "LED телевизор Samsung 64", 12.00);
+
+INSERT INTO products_images (product_id, path)
+VALUES
+(2, "2.jpg");
+
+INSERT INTO delivery_addresses (user_id, address)
+VALUES
+(1, "18a Diagon Alley"),
+(1, "4 Privet Drive");

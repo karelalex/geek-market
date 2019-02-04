@@ -1,17 +1,19 @@
 package com.geekbrains.geekmarketwinter.controllers;
 
+import com.geekbrains.geekmarketwinter.entites.DeliveryAddress;
+import com.geekbrains.geekmarketwinter.entites.Order;
 import com.geekbrains.geekmarketwinter.entites.Product;
-import com.geekbrains.geekmarketwinter.services.ProductService;
-import com.geekbrains.geekmarketwinter.services.ShoppingCartService;
+import com.geekbrains.geekmarketwinter.entites.User;
+import com.geekbrains.geekmarketwinter.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +23,12 @@ public class ShopController {
     private static final int INITIAL_PAGE = 0;
     private static final int PAGE_SIZE = 5;
 
+    private MailService mailService;
+    private UserService userService;
+    private OrderService orderService;
     private ProductService productService;
     private ShoppingCartService shoppingCartService;
+    private DeliveryAddressService deliverAddressService;
 
     @Autowired
     public void setProductService(ProductService productService) {
@@ -32,6 +38,26 @@ public class ShopController {
     @Autowired
     public void setShoppingCartService(ShoppingCartService shoppingCartService) {
         this.shoppingCartService = shoppingCartService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @Autowired
+    public void setDeliverAddressService(DeliveryAddressService deliverAddressService) {
+        this.deliverAddressService = deliverAddressService;
+    }
+
+    @Autowired
+    public void setMailService(MailService mailService) {
+        this.mailService = mailService;
     }
 
     @GetMapping
@@ -50,6 +76,51 @@ public class ShopController {
     public String addProductToCart(Model model, @PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         shoppingCartService.addToCart(httpServletRequest.getSession(), id);
         String referrer = httpServletRequest.getHeader("referer");
-        return "redirect:/shop/?from=" + referrer;
+        return "redirect:" + referrer;
+    }
+
+    @GetMapping("/order/fill")
+    public String orderFill(Model model, HttpServletRequest httpServletRequest, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        User user = userService.findByUserName(principal.getName());
+        Order order = orderService.makeOrder(shoppingCartService.getCurrentCart(httpServletRequest.getSession()), user);
+        List<DeliveryAddress> deliveryAddresses = deliverAddressService.getUserAddresses(user.getId());
+        model.addAttribute("order", order);
+        model.addAttribute("deliveryAddresses", deliveryAddresses);
+        return "order-filler";
+    }
+
+    @PostMapping("/order/confirm")
+    public String orderConfirm(Model model, HttpServletRequest httpServletRequest, @ModelAttribute(name = "order") Order orderFromFrontend, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        User user = userService.findByUserName(principal.getName());
+        Order order = orderService.makeOrder(shoppingCartService.getCurrentCart(httpServletRequest.getSession()), user);
+        order.setDeliveryAddress(orderFromFrontend.getDeliveryAddress());
+        order.setPhoneNumber(orderFromFrontend.getPhoneNumber());
+        order.setDeliveryDate(LocalDateTime.now().plusDays(7));
+        order.setDeliveryPrice(0.0);
+        order = orderService.saveOrder(order);
+        model.addAttribute("order", order);
+        return "order-filler";
+    }
+
+    @GetMapping("/order/result/{id}")
+    public String orderConfirm(Model model, @PathVariable(name = "id") Long id, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        // todo ждем до оплаты, проверка безопасности и проблема с повторной отправкой письма сделать одноразовый вход
+        User user = userService.findByUserName(principal.getName());
+        Order confirmedOrder = orderService.findById(id);
+        if (!user.getId().equals(confirmedOrder.getUser().getId())) {
+            return "redirect:/";
+        }
+        mailService.sendOrderMail(confirmedOrder);
+        model.addAttribute("order", confirmedOrder);
+        return "order-result";
     }
 }

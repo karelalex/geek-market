@@ -23,8 +23,7 @@ public class CartController {
     @GetMapping
     public String cartPage(Model model, HttpSession httpSession) {
         ShoppingCart cart = shoppingCartService.getCurrentCart(httpSession);
-        model.addAttribute("cart", cart.getItems());
-        model.addAttribute("total", cart.getTotalCost());
+        model.addAttribute("cart", cart);
         return "cart-page";
     }
 }

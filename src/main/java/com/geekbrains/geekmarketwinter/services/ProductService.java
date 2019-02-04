@@ -24,14 +24,18 @@ public class ProductService {
     }
 
     public Product getProductById(Long id) {
-        return productRepository.findById(id).get();
+        return productRepository.findById(id).orElse(null);
     }
 
     public Page<Product> getAllProductsByPage(int pageNumber, int pageSize) {
         return productRepository.findAll(PageRequest.of(pageNumber, pageSize));
     }
 
-    public String getHello() {
-        return "Hello";
+    public boolean isProductWithTitleExists(String productTitle) {
+        return productRepository.findOneByTitle(productTitle) != null;
+    }
+
+    public void saveProduct(Product product) {
+        productRepository.save(product);
     }
 }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+
+    <title>Работа с товарами</title>
+
+    <link rel="icon" type="image/png" th:href="@{/favicon.ico}"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <meta name="ctx" th:content="${#httpServletRequest.getContextPath()}"/>
+
+    <style>
+		.error {color:red}
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{navigation :: navi(AdminDashboard)}" />
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <header class="card-header">
+                    <h4 class="card-title mt-2"><span th:text="${product.title == null} ? 'Добавление товара' : 'Изменение товара'"></span></h4>
+                </header>
+                <article class="card-body">
+                    <form th:action="@{/products/edit}" th:object="${product}" method="post" enctype="multipart/form-data">
+                        <input th:field="*{id}" type="hidden" class="form-control">
+
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label>Наименование</label>
+                                <input th:field="*{title}" type="text" class="form-control" placeholder="">
+                                <small class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"> </small>
+                            </div>
+                            <div class="col form-group">
+                                <label>Цена</label>
+                                <input th:field="*{price}" type="number" class="form-control" placeholder="">
+                                <small class="error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"> </small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="input-group">
+                                <div class="form-group col-md-12" >
+                                    <label>Выберите категорию</label>
+                                    <select th:field="*{category.id}" class="form-control">
+                                        <option th:each="category: ${categories}"
+                                                th:value="${category.id}"
+                                                th:text="${category.title}" >
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col form-group">
+                                <label>Артикул</label>
+                                <input th:field="*{vendorCode}" type="text" class="form-control" placeholder="">
+                                <small class="error" th:if="${#fields.hasErrors('vendorCode')}" th:errors="*{vendorCode}"></small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label>Краткое описание</label>
+                                <input th:field="*{shortDescription}" type="text" class="form-control" th:rows="3" placeholder="">
+                                <small class="error" th:if="${#fields.hasErrors('shortDescription')}" th:errors="*{shortDescription}"></small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label>Подробное описание</label>
+                                <input th:field="*{fullDescription}" type="text" class="form-control" th:rows="5" placeholder="">
+                                <small class="error" th:if="${#fields.hasErrors('fullDescription')}" th:errors="*{fullDescription}"></small>
+                                <input th:field="*{id}" type="number" class="invisible" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label>Картинка</label>
+                                <input type="file" name="file" class="form-control-file" accept="image/*"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" name="addProduct" class="btn btn-primary btn-block">Сохранить</button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

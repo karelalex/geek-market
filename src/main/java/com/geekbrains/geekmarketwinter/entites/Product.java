@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,21 +22,21 @@ public class Product implements Serializable {
 
     @ManyToOne
     @NotNull(message = "категория не выбрана")
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(name = "vendor_code")
     @NotNull(message = "не может быть пустым")
     @Pattern(regexp = "([0-9]{1,})", message = "недопустимый символ")
-    @Size(min = 8, max=8, message = "требуется 8 числовых символов")
+    @Size(min = 8, max = 8, message = "требуется 8 числовых символов")
     private String vendorCode;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "product")
     private List<ProductImage> images;
 
     @Column(name = "title")
     @NotNull(message = "не может быть пустым")
-    @Size(min = 5, max=250, message = "требуется минимум 5 символов")
+    @Size(min = 5, max = 250, message = "требуется минимум 5 символов")
     private String title;
 
     @Column(name = "short_description")
@@ -47,7 +48,7 @@ public class Product implements Serializable {
     @Column(name = "price")
     @NotNull(message = "не может быть пустым")
     @DecimalMin(value = "0.01", message = "минимальное значение 0")
-    @Digits(integer=10, fraction=2)
+    @Digits(integer = 10, fraction = 2)
     private double price;
 
     @Column(name = "create_at")
@@ -57,4 +58,11 @@ public class Product implements Serializable {
     @Column(name = "update_at")
     @UpdateTimestamp
     private LocalDateTime updateAt;
+
+    public void addImage(ProductImage productImage) {
+        if (images == null) {
+            images = new ArrayList<>();
+        }
+        images.add(productImage);
+    }
 }

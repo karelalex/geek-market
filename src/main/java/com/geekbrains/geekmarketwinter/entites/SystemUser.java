@@ -6,6 +6,7 @@ import com.geekbrains.geekmarketwinter.validation.ValidEmail;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -37,5 +38,6 @@ public class SystemUser {
     @ValidEmail
     @NotNull(message = "is required")
     @Size(min = 1, message = "is required")
+    // @Email
     private String email;
 }
