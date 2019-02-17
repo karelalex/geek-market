@@ -13,6 +13,12 @@ import java.util.List;
 @Service
 public class ProductService {
     private ProductRepository productRepository;
+    private ImageSaverService imageSaverService;
+
+    @Autowired
+    public void setImageSaverService(ImageSaverService imageSaverService) {
+        this.imageSaverService = imageSaverService;
+    }
 
     @Autowired
     public void setProductRepository(ProductRepository productRepository) {
@@ -41,6 +47,7 @@ public class ProductService {
     public String removeProduct(Product product){
         if (productRepository.getOrgerCountOfProduct(product.getId())<1){
             productRepository.delete(product);
+            imageSaverService.removeImages(product.getImages());
             return "Продукт успешно удалён";
         }
         else {

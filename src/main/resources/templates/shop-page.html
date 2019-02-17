@@ -43,7 +43,7 @@
             <td>
                 <a th:href="@{'/shop/cart/add/' + ${product.id}}" class="btn btn-primary">Добавить в корзину</a>
                 <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" th:href="@{'/products/edit/' + ${product.id}}" class="btn btn-warning">Редактировать</a>
-                <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" th:href="@{'/products/remove/' + ${product.id}}" class="btn btn-warning">Удалить</a>
+                <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" th:href="@{'/products/remove/' + ${product.id}}" class="btn btn-danger">Удалить</a>
             </td>
         </tr>
         </tbody>
@@ -58,6 +58,7 @@
             <!--<li class="page-item"><a class="page-link" href="#">Next</a></li>-->
         </ul>
     </nav>
+    <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" ><a  th:href="@{'/products/edit/0'}" class="btn btn-succes">Добавить новый</a> </div>
 </div>
 
 </body>
