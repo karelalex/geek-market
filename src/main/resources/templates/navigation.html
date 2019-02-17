@@ -27,7 +27,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item" th:classappend="${activeTab == 'Shop' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/shop/?page=1&totalPage=5}">Товары<span
+                    <a class="nav-link" th:href="@{'/shop/?page=1'}">Товары<span
                             class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item" th:classappend="${activeTab == 'Cart' ? 'active' : ''}">

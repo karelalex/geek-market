@@ -6,6 +6,7 @@ import com.geekbrains.geekmarketwinter.entites.Product;
 import com.geekbrains.geekmarketwinter.entites.User;
 import com.geekbrains.geekmarketwinter.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -61,13 +62,15 @@ public class ShopController {
     }
 
     @GetMapping
-    public String shopPage(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("totalPage") Optional<Integer> totalPage) {
+    public String shopPage(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("itemsonpage") Optional<Integer> itemCount) {
         final int currentPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
-        final int totalPageNumber = totalPage.orElse(productService.getAllProductsByPage(currentPage, PAGE_SIZE).getTotalPages());
-        List<Product> products = productService.getAllProductsByPage(currentPage, PAGE_SIZE).getContent();
-        model.addAttribute("products", products);
-        model.addAttribute("page", currentPage);
-        model.addAttribute("totalPage", totalPageNumber);
+        //final int totalPageNumber = totalPage.orElse(productService.getAllProductsByPage(currentPage, PAGE_SIZE).getTotalPages());
+        final int itemsOnPage = (itemCount.orElse(0)<1) ? PAGE_SIZE : itemCount.get();
+        Page<Product> productsPage = productService.getAllProductsByPage(currentPage, itemsOnPage);
+        //model.addAttribute("products", products);
+        model.addAttribute("page", productsPage);
+        model.addAttribute("itemsonpage", itemsOnPage);
+       // model.addAttribute("totalPage", totalPageNumber);
         model.addAttribute("productService", productService);
         return "shop-page";
     }
