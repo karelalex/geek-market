@@ -58,7 +58,16 @@
             <!--<li class="page-item"><a class="page-link" href="#">Next</a></li>-->
         </ul>
     </nav>
-    <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" ><a  th:href="@{'/products/edit/0'}" class="btn btn-succes">Добавить новый</a> </div>
+    <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" ><a  th:href="@{'/products/edit/0'}" class="btn btn-success">Добавить новый</a>
+    <div class="custom-file">
+        <form th:action="@{/products/importFromFile}" method="post" enctype="multipart/form-data">
+            <input class="custom-file-input" type="file" id="fileChooser" name="productList">
+            <label class="custom-file-label" for="fileChooser">Выбери файл</label>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+    </div>
+
 </div>
 
 </body>

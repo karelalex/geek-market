@@ -5,6 +5,7 @@ import com.geekbrains.geekmarketwinter.entites.ProductImage;
 import com.geekbrains.geekmarketwinter.services.CategoryService;
 import com.geekbrains.geekmarketwinter.services.ProductService;
 import com.geekbrains.geekmarketwinter.services.ImageSaverService;
+import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 @Controller
 @RequestMapping("/products")
@@ -61,6 +65,13 @@ public class ProductController {
         //model.addAttribute("categories", categoryService.getAllCategories());
         return "/remove-product";
     }
+
+    @PostMapping("/importFromFile")
+    public String importProductsFromFile(@RequestParam("productList") MultipartFile file){
+        productService.importFromFile(file);
+        return "redirect:/shop";
+    }
+
 
     @PostMapping("/edit")
     public String processProductAddForm(@Valid @ModelAttribute("product") Product product, BindingResult theBindingResult, Model model, @RequestParam("file") MultipartFile file) {
