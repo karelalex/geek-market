@@ -38,4 +38,13 @@ public class ProductService {
     public void saveProduct(Product product) {
         productRepository.save(product);
     }
+    public String removeProduct(Product product){
+        if (productRepository.getOrgerCountOfProduct(product.getId())<1){
+            productRepository.delete(product);
+            return "Продукт успешно удалён";
+        }
+        else {
+            return ("Нельзя удалить продукт, который уже был заказан");
+        }
+    }
 }

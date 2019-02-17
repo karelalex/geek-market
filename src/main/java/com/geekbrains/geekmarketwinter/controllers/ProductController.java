@@ -49,6 +49,19 @@ public class ProductController {
         return "/edit-product";
     }
 
+    @GetMapping("/remove/{id}")
+    public String remove(Model model, @PathVariable(name = "id") Long id) {
+        Product product = productService.getProductById(id);
+        if (product == null) {
+            model.addAttribute("result_text", "Такого продукта в базе нет");
+        } else {
+            String message = productService.removeProduct(product);
+            model.addAttribute("result_text", message);
+        }
+        //model.addAttribute("categories", categoryService.getAllCategories());
+        return "/remove-product";
+    }
+
     @PostMapping("/edit")
     public String processProductAddForm(@Valid @ModelAttribute("product") Product product, BindingResult theBindingResult, Model model, @RequestParam("file") MultipartFile file) {
         if (product.getId() == 0 && productService.isProductWithTitleExists(product.getTitle())) {
